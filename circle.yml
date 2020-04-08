@@ -3,9 +3,17 @@ jobs:
   test:
     docker:
       - image: cypress/base:12.16.1
+
       - image: postgres:12
         environment:
           POSTGRES_PASSWORD: postgrespassword
+
+      - image: hasura/graphql-engine:v1.1.1
+        environment:
+          HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+          HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
+          HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+
     steps:
       - checkout
 
