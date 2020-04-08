@@ -31,12 +31,13 @@ workflows:
       - cypress/run:
           name: Hasura test
           executor: pg-and-hasura
+
           # before Cypress does its series of steps: checkout, install, run
           # we want to make sure the database is ready
           pre-steps:
             - run:
                 name: Wait for PG db
                 command: npx wait-on --timeout 30000 tcp:5432 && echo 'Posgres is ready'
-            - run:
-                name: apply migrations
-                command: npx hasura migrate apply --project my-project
+
+          # use "build" parameter to apply migrations
+          build: 'npx hasura migrate apply --project my-project'
