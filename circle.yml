@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - checkout
-      - run: npm ci
+      - run: npm ci 📦
       - run:
           name: Wait for PG db
           command: npx wait-on --timeout 30000 tcp:5432 && echo 'Posgres is ready'
@@ -34,6 +34,10 @@ jobs:
           name: check applied migrations
           command: npx hasura migrate status
           working_directory: my-project
+
+      - run:
+          name: Execute Cypress tests 🧪
+          command: npx cypress run
 
 workflows:
   hasura_workflow:
