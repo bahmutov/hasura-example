@@ -21,7 +21,7 @@ jobs:
       - run: npm ci
       - run:
           name: Wait for PG db
-          command: npx wait-on --timeout 30000 tcp:5432
+          command: npx wait-on --timeout 30000 tcp:5432 && echo 'Posgres is ready'
       - run:
           name: check migrations
           command: npx hasura migrate status
