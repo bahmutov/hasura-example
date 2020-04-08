@@ -1,3 +1,4 @@
+# https://circleci.com/docs/2.0/postgres-config/
 version: 2.1
 jobs:
   test:
@@ -10,12 +11,13 @@ jobs:
 
       - image: hasura/graphql-engine:v1.1.1
         environment:
-          HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+          HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@localhost:5432/postgres
           HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
           HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
 
     steps:
       - checkout
+      - npm ci
 
 workflows:
   hasura_workflow:
