@@ -18,7 +18,9 @@ jobs:
 
     steps:
       - checkout
-      - run: npm ci 📦
+      - run:
+          name: install dependencies 📦
+          command: npm ci
       - run:
           name: Wait for PG db
           command: npx wait-on --timeout 30000 tcp:5432 && echo 'Posgres is ready'
