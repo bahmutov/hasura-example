@@ -26,6 +26,14 @@ jobs:
           name: check migrations
           command: npx hasura migrate status
           working_directory: my-project
+      - run:
+          name: apply migrations
+          command: npx hasura migrate apply
+          working_directory: my-project
+      - run:
+          name: check applied migrations
+          command: npx hasura migrate status
+          working_directory: my-project
 
 workflows:
   hasura_workflow:
