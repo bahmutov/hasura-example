@@ -1,47 +1,42 @@
+# service images config taken from
 # https://circleci.com/docs/2.0/postgres-config/
 version: 2.1
-jobs:
-  test:
+orbs:
+  cypress: cypress-io/cypress@1
+executors:
+  pg-and-hasura:
     docker:
+      # main image is a Cypress Docker one
       - image: cypress/base:12.16.1
 
+      # and these are two utility containers
+      # one with Postgres database, another with Hasura engine
       - image: postgres:12
         environment:
           POSTGRES_PASSWORD: postgrespassword
 
       - image: hasura/graphql-engine:v1.1.1
         environment:
+          # point back at Postgres service
           HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@localhost:5432/postgres
-          HASURA_GRAPHQL_ENABLE_CONSOLE: "false" # set to "false" to disable console
+          HASURA_GRAPHQL_ENABLE_CONSOLE: "false"
           HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+          # Postgres service might take a few seconds to start
+          # so let's tell Hasura engine to keep retrying
           HASURA_GRAPHQL_NO_OF_RETRIES: 30
-
-    steps:
-      - checkout
-      - run:
-          name: install dependencies 📦
-          command: npm ci
-      - run:
-          name: Wait for PG db
-          command: npx wait-on --timeout 30000 tcp:5432 && echo 'Posgres is ready'
-      - run:
-          name: check migrations
-          command: npx hasura migrate status
-          working_directory: my-project
-      - run:
-          name: apply migrations
-          command: npx hasura migrate apply
-          working_directory: my-project
-      - run:
-          name: check applied migrations
-          command: npx hasura migrate status
-          working_directory: my-project
-
-      - run:
-          name: Execute Cypress tests 🧪
-          command: npx cypress run
 
 workflows:
   hasura_workflow:
     jobs:
-      - test
+      - cypress/run:
+          name: Hasura test
+          executor: pg-and-hasura
+          # before Cypress does its series of steps: checkout, install, run
+          # we want to make sure the database is ready
+          pre-steps:
+            - run:
+                name: Wait for PG db
+                command: npx wait-on --timeout 30000 tcp:5432 && echo 'Posgres is ready'
+            - run:
+                name: apply migrations
+                command: npx hasura migrate apply --project my-project
