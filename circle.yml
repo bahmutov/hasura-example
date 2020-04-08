@@ -20,6 +20,9 @@ jobs:
       - checkout
       - run: npm ci
       - run:
+          name: Wait for PG db
+          command: npx wait-on --timeout 30000 tcp:5432
+      - run:
           name: check migrations
           command: npx hasura migrate status
           working_directory: my-project
