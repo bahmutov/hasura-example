@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - checkout
-      - npm ci
+      - run: npm ci
 
 workflows:
   hasura_workflow:
