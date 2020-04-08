@@ -57,3 +57,5 @@ workflows:
           executor: pg-and-hasura
             # a few steps
 ```
+
+![Circle build](images/circle.png)
